@@ -1,0 +1,49 @@
+services:
+  dvwa-web:
+    image: cytopia/dvwa:php-8.1
+    container_name: dvwa-web
+    restart: unless-stopped
+    ports:
+      - "${DVWA_PORT:-8080}:80"
+    environment:
+      - MYSQL_HOSTNAME=dvwa-db
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-dvwa}
+      - MYSQL_USERNAME=${MYSQL_USER:-dvwa}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-p@ssw0rd}
+      - SECURITY_LEVEL=${SECURITY_LEVEL:-low}
+      - PHPIDS_ENABLED=${PHPIDS_ENABLED:-0}
+      - PHPIDS_VERBOSE=${PHPIDS_VERBOSE:-0}
+      - PHP_DISPLAY_ERRORS=${PHP_DISPLAY_ERRORS:-1}
+    depends_on:
+      dvwa-db:
+        condition: service_healthy
+    networks:
+      - dvwa-net
+
+  dvwa-db:
+    image: mariadb:10.5
+    container_name: dvwa-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpass}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-dvwa}
+      - MYSQL_USER=${MYSQL_USER:-dvwa}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-p@ssw0rd}
+    volumes:
+      - dvwa_db_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - dvwa-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpass}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+networks:
+  dvwa-net:
+    driver: bridge
+
+volumes:
+  dvwa_db_data:

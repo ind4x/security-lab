@@ -1,0 +1,37 @@
+# Java & Maven
+target/
+*.class
+.mvn/wrapper/maven-wrapper.jar
+*.log
+
+# IDE & Editors
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS Artifacts
+.DS_Store
+Thumbs.db
+
+# Python & Jupyter
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.ipynb_checkpoints/
+
+# Runtime DB & Uploads (TP-02)
+*.sqlite
+*.sqlite3
+app/data/*.db
+app_corrige/data/*.db
+app/uploads/*
+!app/uploads/.gitkeep
+app_corrige/uploads/*
+!app_corrige/uploads/.gitkeep
+
+# AI Assistant Context
+AGENTS.md
